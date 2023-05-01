@@ -31,6 +31,7 @@ def onliner(token, status):
     ws = websocket.WebSocket()
     ws.connect("wss://gateway.discord.gg/?v=9&encoding=json")
     start = json.loads(ws.recv())
+    print(start)
     heartbeat = start["d"]["heartbeat_interval"]
     auth = {
         "op": 2,
@@ -71,6 +72,14 @@ def onliner(token, status):
     }
     ws.send(json.dumps(cstatus))
     online = {"op": 1, "d": "None"}
+    while True:
+        try:
+            start = json.loads(ws.recv())
+            if start["t"] == "MESSAGE_CREATE":
+                print("%s: %s: %s" % (start["d"]["id"], start["d"]["content"], start["d"]["embeds"]))
+            # print(start)
+        except Exception as e:
+            print(e)
     time.sleep(heartbeat / 1000)
     ws.send(json.dumps(online))
 
